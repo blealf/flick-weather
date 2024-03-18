@@ -4,19 +4,22 @@
       <ClearButton v-if="showClearButton" class="clear" @click="clearInput" />
       <div ref="searchResultsBox" class="suggestion">
         <p v-if="loading" class="loading">loading...</p>
-        <p v-for="city in citiesResults" :key="city" @click="selectedCity = city">{{ city }}</p>
+        <p v-for="city in citiesResults" :key="city.name" @click="selectCity(city)">
+          {{ city.name + ', ' + city.country }}
+        </p>
       </div>
     </div>
 </template>
 
 <script setup>
+import axios from 'axios';
+import * as allCities from 'cities.json';
+import { useRoute } from 'vue-router';
 import { ref, watch, defineAsyncComponent } from 'vue';
-import useWeather from '../stores/useWeatherStore';
+import useWeather from '../stores/weatherStore';
+// import { openWeatherApiKey } from '../utils/helper';
 
 const weather = useWeather();
-/* eslint-disable-next-line */
-// import { debounce } from 'vue-debounce';
-
 const ClearButton = defineAsyncComponent(() => import('../assets/images/cancel.svg'));
 const searchResultsBox = ref(null);
 const citiesResults = ref([]);
@@ -24,18 +27,26 @@ const search = ref('');
 const showClearButton = ref(false);
 const selectedCity = ref('');
 const loading = ref(false);
-// const citiesAPIUrl = 'https://api.api-ninjas.com/v1/city?name=';
+
+const route = useRoute();
 
 const clearInput = () => {
   search.value = '';
   citiesResults.value.splice(0);
 };
-const fetchCities = () => {
-  citiesResults.value.splice(0);
-  const cities = ['Lagos', 'England', 'London'];
-  citiesResults.value.push(
-    ...cities.filter((city) => city.toLowerCase().includes(search.value.toLowerCase())),
-  );
+
+const fetchCities = async () => {
+  try {
+    const cities = await allCities.default.filter(
+      (city) => city.name.toLowerCase().includes(search.value.toLowerCase()),
+    ).slice(0, 7)
+      .map((city) => ({ name: city.name, country: city.country }));
+
+    citiesResults.value.splice(0);
+    citiesResults.value.push(...cities);
+  } catch (error) {
+    // console.log(error);
+  }
 };
 
 const debounce = (func, delay) => {
@@ -52,23 +63,18 @@ const debounce = (func, delay) => {
 
 const debounceFetchCities = debounce(fetchCities, 1000);
 
-clearTimeout();
+const selectCity = async (city) => {
+  selectedCity.value = city;
+  await weather.setCurrentCity(city, route.path === "/");
+  clearInput();
+};
 
 watch(search, (newVal, preVal) => {
   showClearButton.value = newVal;
   searchResultsBox.value.style.display = newVal ? 'flex' : 'none';
   if (newVal.length === 0) clearInput();
-  if (newVal !== preVal) debounceFetchCities();
+  if (newVal !== preVal && newVal.length >= 3) debounceFetchCities();
 });
-
-watch(selectedCity, (val) => {
-  if (val) {
-    // weather.setCurrentCity(selectedCity.value);
-    console.log({ val });
-    console.log({ weather });
-  }
-});
-
 </script>
 
 <style lang="scss" scoped>
@@ -82,7 +88,7 @@ watch(selectedCity, (val) => {
   input {
     border-radius: 10px;
     padding: 5px 10px;
-    width: 100%;
+    width: 90%;
     border: none;
     height: 50px;
     max-width: 900px;
@@ -133,4 +139,4 @@ watch(selectedCity, (val) => {
     background:
     linear-gradient(90deg, rgba(51,72,102,1) 0%, rgba(11,19,30,1) 49%, rgba(95,130,181,1) 100%); }
 }
-</style>
+</style>../stores/weather

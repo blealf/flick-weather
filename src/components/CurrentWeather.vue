@@ -1,9 +1,9 @@
 <template>
   <div class="current-weather">
     <div class="conditions">
-      <h1>{{ weather.currentCity }}</h1>
-      <p>Chance of rain 0%</p>
-      <h1 class="temp">31˚</h1>
+      <h1>{{ weather.getCurrentCity.name }}</h1>
+      <p>Chance of rain {{ currentWeather.rain }}%</p>
+      <h1 class="temp">{{ currentWeather.temperature + '' + symbol }}</h1>
     </div>
     <div>
       <img :src="weatherIcon" alt="Sun">
@@ -12,14 +12,13 @@
 </template>
 
 <script setup>
-import useWeather from '../stores/useWeatherStore';
+import useWeather from '../stores/weatherStore';
+import { getWeatherIcon } from '../utils/helper';
 
 const weather = useWeather();
-
-const weatherIcon = weather.getWetherIcon('01d', '4x');
-
-console.log({ weather: weather.cities, weatherIcon });
-
+const currentWeather = weather.currentWeather;
+const symbol = weather.unitSettings.temperature.symbol + weather.unitSettings.temperature.name.slice(0, 1);
+const weatherIcon = getWeatherIcon(currentWeather.icon, '4x');
 </script>
 
 <style lang="scss" scoped>
@@ -40,6 +39,7 @@ console.log({ weather: weather.cities, weatherIcon });
       padding: 0;
       margin: 0;
       margin-bottom: 10px;
+      font-size: 35px;
     }
     .temp {
       margin-top: 10vh;

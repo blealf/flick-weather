@@ -14,7 +14,7 @@
 
 <script setup>
 import Card from './CardComponent.vue';
-import useWeather from '../stores/useWeatherStore';
+import useWeather from '../stores/weatherStore';
 
 const weather = useWeather();
 
@@ -42,4 +42,4 @@ console.log(todaysForecast);
     }
   }
 }
-</style>
+</style>../stores/weather

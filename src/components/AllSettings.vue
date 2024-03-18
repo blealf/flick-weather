@@ -8,7 +8,7 @@
           <div class="value" >
             <p
               v-for="value in unit.values" :key="value"
-              :class="{active: units[unit.name] === value}"
+              :class="{active: units[unit.name].name === value}"
               @click="setUnit(unit.name, value)
             ">{{ value }}</p>
           </div>
@@ -21,7 +21,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import useWeather from '../stores/useWeatherStore';
+import useWeather from '../stores/weatherStore';
 import CardComponent from './CardComponent.vue';
 
 const weather = useWeather();
@@ -83,4 +83,4 @@ const setUnit = (unit, value) => {
     }
   }
 }
-</style>
+</style>../stores/weather

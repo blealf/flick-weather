@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import useWeather from '../stores/useWeatherStore';
+import useWeather from '../stores/weatherStore';
 import Card from './CardComponent.vue';
 
 const weather = useWeather();
@@ -51,4 +51,4 @@ console.log(sevenDayWeather);
     }
   }
 }
-</style>
+</style>../stores/weather

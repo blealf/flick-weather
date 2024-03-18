@@ -30,6 +30,6 @@ module.exports = {
     'vue',
   ],
   rules: {
-    'import/no-extraneous-dependencies': ['warn', { devDependencies: false, optionalDependencies: false, peerDependencies: false }],
+    'import/no-extraneous-dependencies': [],
   },
 };

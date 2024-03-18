@@ -10,11 +10,13 @@
 </template>
 
 <script setup>
-// import SearchCity from './SearchCity.vue';
+// import { markRaw, defineAsyncComponent } from 'vue';
 import CurrentWeather from './CurrentWeather.vue';
 import HourlyForecast from './HourlyForecast.vue';
 import AirConditions from './AirConditions.vue';
 import SevenDayForecast from './SevenDayForecast.vue';
+
+// const AirConditions = markRaw(defineAsyncComponent(() => import('./AirConditions.vue')));
 </script>
 
 <style lang="scss" scoped>

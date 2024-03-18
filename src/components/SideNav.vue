@@ -24,8 +24,6 @@ import { useRoute, useRouter } from 'vue-router';
 const route = useRoute();
 const router = useRouter();
 
-console.log({ route: route.path });
-
 const fetchSvg = (icon) => defineAsyncComponent(() => import(`../assets/images/nav/${icon}.svg`));
 
 const logo = fetchSvg('logo');
