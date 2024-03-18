@@ -1,0 +1,86 @@
+<template>
+  <div class="settings">
+    <h1>Settings</h1>
+    <div class="settings-wrapper">
+      <CardComponent>
+        <div v-for="unit in allUnits" :key="unit.name" class="unit">
+          <p>{{ capitalize(unit.name) }}</p>
+          <div class="value" >
+            <p
+              v-for="value in unit.values" :key="value"
+              :class="{active: units[unit.name] === value}"
+              @click="setUnit(unit.name, value)
+            ">{{ value }}</p>
+          </div>
+        </div>
+      </CardComponent>
+      <CardComponent></CardComponent>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+import useWeather from '../stores/useWeatherStore';
+import CardComponent from './CardComponent.vue';
+
+const weather = useWeather();
+const units = weather.unitSettings;
+const allUnits = ref([
+  {
+    name: 'temperature',
+    values: ['Celsius', 'Fahrenheit'],
+  },
+]);
+
+const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
+const setUnit = (unit, value) => {
+  weather.setUnit(unit, value);
+};
+</script>
+
+<style lang="scss" scoped>
+.settings {
+  width: 100%;
+  @include md {
+    width: calc(100vw - 40px);
+    padding: 0;
+    flex-direction: column;
+    transition: width 0.3s;
+  }
+  .settings-wrapper {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    @include md {
+      flex-direction: column;
+    }
+  }
+
+  .unit {
+    /*  */
+  }
+  .value {
+    margin-top: 10px;
+    border-radius: 10px;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 1fr 1fr;
+    justify-content: space-evenly;
+    align-items: center;
+    background: var(--main-bg);
+    padding: 5px;
+    p {
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.5s;
+    }
+    .active {
+      background: var(--card-bg);
+      border-radius: 8px;
+    }
+  }
+}
+</style>
