@@ -1,6 +1,6 @@
 <template>
   <Card>
-    <h2>DETAILED HOURLY FORECAST</h2>
+    <h2>HOURLY FORECAST</h2>
 
     <div class="forecast__wrapper">
       <div

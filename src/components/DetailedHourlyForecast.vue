@@ -1,6 +1,6 @@
 <template>
   <Card class="seven-day">
-    <h2>7-DAY FORECAST</h2>
+    <h2>DETAILED HOURLY FORECAST</h2>
     <div class="seven-day__wrapper">
       <div v-for="item in todaysForecast" :key="item.name" class="seven-day__item">
         <p>{{ item.time }}</p>
