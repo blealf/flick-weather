@@ -1,14 +1,17 @@
 <template>
   <Card class="air-conditions">
     AIR CONDITIONS
-    <div class="air-conditions__wrapper">
+    <div v-if="airConditions.length > 0" class="air-conditions__wrapper">
       <div v-for="item in airConditions" :key="item.name" class="air-conditions__item">
         <Component :is="item.icon" class="icon" />
         <div>
-          <p>{{  item.name }}</p>
-          <h2>{{  item.value }}</h2>
+          <p>{{ item.name }}</p>
+          <h2>{{ item.value }}</h2>
         </div>
       </div>
+    </div>
+    <div v-else class="no-data">
+      <h2>NO DATA...</h2>
     </div>
   </Card>
 </template>
@@ -19,7 +22,7 @@ import Card from './CardComponent.vue';
 import useWeather from '../stores/weatherStore';
 
 const weather = useWeather();
-const currentAirData = weather.currentAirData;
+const airConditions = reactive([]);
 
 const fetchSvg = (icon) => defineAsyncComponent(() => import(`../assets/images/${icon}.svg`));
 
@@ -37,15 +40,21 @@ const getAirDataImages = {
   visibility: fetchSvg('sun')
 };
 
-const airConditions = reactive([]);
 
-Object.entries(currentAirData).forEach(([key, value]) => {
-  airConditions.push({
-    value,
-    name: mapAirDataNames[key],
-    icon: getAirDataImages[key]
+const populateAirData = (airData) => {
+  if (!airData.windSpeed && !airData.visibility) return
+  Object.entries(airData).forEach(([key, value]) => {
+    airConditions.push({
+      value,
+      name: mapAirDataNames[key],
+      icon: getAirDataImages[key]
+    });
   });
-});
+};
+
+weather.$subscribe((_, state) => {
+  populateAirData(state.currentAirData);
+})
 
 // const airConditions2 = shallowRef([
 //   {
@@ -82,6 +91,7 @@ Object.entries(currentAirData).forEach(([key, value]) => {
     grid-gap: 10px;
     justify-content: flex-start;
     align-items: flex-start;
+    margin-top: 10px;
   }
 
   &__item {
@@ -100,5 +110,12 @@ Object.entries(currentAirData).forEach(([key, value]) => {
       margin-top: 20px;
     }
   }
+}
+
+.no-data {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
 }
 </style>

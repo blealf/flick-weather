@@ -2,7 +2,9 @@
   <div class="current-weather">
     <div class="conditions">
       <h1>{{ weather.getCurrentCity.name }}</h1>
-      <p>Chance of rain {{ currentWeather.rain }}%</p>
+      <p v-if="currentWeather.rain">Chance of rain {{ currentWeather.rain }}%</p>
+      <p>Humidity: {{ currentWeather.humidity }}</p>
+      <p>{{ capitalize(currentWeather.description) }}</p>
       <h1 class="temp">{{ currentWeather.temperature + '' + symbol }}</h1>
     </div>
     <div>
@@ -12,13 +14,18 @@
 </template>
 
 <script setup>
+import { shallowRef } from 'vue';
 import useWeather from '../stores/weatherStore';
-import { getWeatherIcon } from '../utils/helper';
+import { getWeatherIcon, capitalize } from '../utils/helper';
 
 const weather = useWeather();
 const currentWeather = weather.currentWeather;
 const symbol = weather.unitSettings.temperature.symbol + weather.unitSettings.temperature.name.slice(0, 1);
-const weatherIcon = getWeatherIcon(currentWeather.icon, '4x');
+const weatherIcon = shallowRef(getWeatherIcon(currentWeather.icon, '4x'));
+
+weather.$subscribe((_, state) => {
+  weatherIcon = getWeatherIcon(state.currentWeather.icon, '4x');
+})
 </script>
 
 <style lang="scss" scoped>

@@ -14,6 +14,7 @@ import { onMounted } from 'vue';
 import SideNav from './components/SideNav.vue';
 import SearchCity from './components/SearchCity.vue';
 import useWeather from './stores/weatherStore';
+import { useAxios } from './utils/useAxios';
 
 const route = useRoute();
 const weather = useWeather();
@@ -25,6 +26,12 @@ const usePosition = async (position) => {
     latitude: position.coords.latitude
   });
   
+  // const { data } = await useAxios({
+  //   unit: weather.getUnit,
+  //   position: { lon, lat },
+  //   city: weather.getCurrentCity || null,
+  // })
+  // console.log(data)
   await weather.setCurrentWeather({ city: weather.getCurrentCity, position: { lon, lat } });
 }
 
@@ -32,7 +39,7 @@ onMounted(async () => {
   if (navigator.geolocation) {
     await navigator.geolocation.getCurrentPosition(usePosition);
   } else {
-    await weather.setCurrentWeather({ city: weather.getCurrentCity });
+    // await weather.setCurrentWeather({ city: weather.getCurrentCity });
   }
 });
 </script>
