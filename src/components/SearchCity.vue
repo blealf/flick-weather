@@ -3,7 +3,7 @@
       <input v-model="search" type="text" placeholder="Enter City" />
       <ClearButton v-if="showClearButton" class="clear" @click="clearInput" />
       <div ref="searchResultsBox" class="suggestion">
-        <p v-if="loading" class="loading">loading...</p>
+        <p v-show="loading" class="loading"></p>
         <p v-for="city in citiesResults" :key="city.name" @click="selectCity(city)">
           {{ city.name + ', ' + city.country }}
         </p>
@@ -17,7 +17,6 @@ import * as allCities from 'cities.json';
 import { useRoute } from 'vue-router';
 import { ref, watch, defineAsyncComponent } from 'vue';
 import useWeather from '../stores/weatherStore';
-// import { openWeatherApiKey } from '../utils/helper';
 
 const weather = useWeather();
 const ClearButton = defineAsyncComponent(() => import('../assets/images/cancel.svg'));
@@ -44,9 +43,7 @@ const fetchCities = async () => {
 
     citiesResults.value.splice(0);
     citiesResults.value.push(...cities);
-  } catch (error) {
-    // console.log(error);
-  }
+  } catch (error) {}
 };
 
 const debounce = (func, delay) => {
@@ -66,10 +63,15 @@ const debounceFetchCities = debounce(fetchCities, 1000);
 const selectCity = async (city) => {
   selectedCity.value = city;
   await weather.setCurrentCity(city, route.path === "/");
+  await weather.setCurrentWeather({ city })
+    .then(async (coord) => {
+      await weather.setHourlyForecast(coord)
+    })
   clearInput();
 };
 
 watch(search, (newVal, preVal) => {
+  loading.value = true
   showClearButton.value = newVal;
   searchResultsBox.value.style.display = newVal ? 'flex' : 'none';
   if (newVal.length === 0) clearInput();
@@ -81,14 +83,14 @@ watch(search, (newVal, preVal) => {
 .search {
   position: relative;
   margin: 20px 0;
-  width: 50vw;
+  width: 40vw;
   @include sm {
     width: 90vw;
   }
   input {
     border-radius: 10px;
     padding: 5px 10px;
-    width: 90%;
+    width: 100%;
     border: none;
     height: 50px;
     max-width: 900px;
@@ -124,19 +126,20 @@ watch(search, (newVal, preVal) => {
   }
 }
 .loading {
-  animation: loading 0.1ms infinite;
+  position: relative;
+  width: 100%;
+  overflow-x: hidden;
+  height: 40px;
+  &::before {
+    animation: shimmer 500ms infinite;
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    background: var(--card-bg);
+  }
 }
 
-@keyframes loading {
-  0% {
-    background:
-      linear-gradient(90deg, rgba(95,130,181,1) 0%, rgba(51,72,102,1) 49%, rgba(11,19,30,1) 100%); }
-  50% {
-    background:
-    linear-gradient(90deg, rgba(11,19,30,1) 0% rgba(95,130,181,1) 49%, rgba(51,72,102,1) 100%);
-  }
-  100% {
-    background:
-    linear-gradient(90deg, rgba(51,72,102,1) 0%, rgba(11,19,30,1) 49%, rgba(95,130,181,1) 100%); }
-}
-</style>../stores/weather
+
+</style>

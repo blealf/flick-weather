@@ -3,20 +3,18 @@
     <div class="home__grid">
       <CurrentWeather class="current" />
       <HourlyForecast class="hourly" />
-      <SevenDayForecast class="seven" />
+      <DetailedHourlyForecast class="seven" />
       <AirConditions class="air"/>
     </div>
   </div>
 </template>
 
 <script setup>
-// import { markRaw, defineAsyncComponent } from 'vue';
 import CurrentWeather from './CurrentWeather.vue';
 import HourlyForecast from './HourlyForecast.vue';
 import AirConditions from './AirConditions.vue';
-import SevenDayForecast from './SevenDayForecast.vue';
+import DetailedHourlyForecast from './DetailedHourlyForecast.vue';
 
-// const AirConditions = markRaw(defineAsyncComponent(() => import('./AirConditions.vue')));
 </script>
 
 <style lang="scss" scoped>
@@ -47,7 +45,7 @@ import SevenDayForecast from './SevenDayForecast.vue';
       grid-column: 1/2;
       grid-row: 3/4;
     }
-    @include md {
+    @include lg {
       grid-template-columns: 1fr;
       .current {
         grid-column: 1/2;

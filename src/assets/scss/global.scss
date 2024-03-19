@@ -1,1 +1,27 @@
 @import './screens';
+
+
+.loading-skeleton {
+  position: relative;
+  width: 100%;
+  overflow-x: hidden;
+  height: 100%;
+  &::before {
+    animation: shimmer 500ms infinite;
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    background: #444;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    left: 0;
+  }
+  100% {
+    left: 100%;
+  }
+}

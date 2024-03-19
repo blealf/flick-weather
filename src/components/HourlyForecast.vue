@@ -1,25 +1,54 @@
 <template>
   <Card>
-    <h2>TODAY'S FORECAST</h2>
+    <h2>DETAILED HOURLY FORECAST</h2>
 
     <div class="forecast__wrapper">
-      <div v-for="item in 6" :key="item.time" class="forecast__item">
-      <p>6:00 AM</p>
-      <img src="" alt="">
-      <h2>25deg</h2>
-    </div>
+      <div 
+        v-for="item in (isMobile ? todaysForecast.slice(1, 5) : todaysForecast.slice(1, 7))" 
+        :key="item.time" 
+        class="forecast__item"
+      >
+        <p>{{ item.time }}</p>
+        <img :src="item.icon" alt="3-hr" />
+        <h3>{{ item.temp }} {{ symbol }}</h3>
+      </div>
     </div>
   </Card>
 </template>
 
 <script setup>
+import { ref, onMounted, onUnmounted } from 'vue';
 import Card from './CardComponent.vue';
 import useWeather from '../stores/weatherStore';
+import { getWeatherIcon } from '../utils/helper';
+
+const isMobile = ref(false)
+
+const getWindowMatch = async () => {
+  return await window.matchMedia('(max-width: 599px)').matches;
+}
+
+const updateIsMobile = async () => {
+  isMobile.value = await getWindowMatch();
+}
+
+onMounted(async () => {
+  await updateIsMobile()
+  window.addEventListener('resize', updateIsMobile);
+})
+
+onUnmounted(async () => {
+  window.removeEventListener('resize', updateIsMobile);
+})
 
 const weather = useWeather();
 
-const todaysForecast = weather.hourlyWeather;
-console.log(todaysForecast);
+const todaysForecast = ref(weather.hourlyWeather);
+const symbol = weather.unitSettings.temperature.symbol + weather.unitSettings.temperature.name.charAt(0).toUpperCase();
+
+weather.$subscribe((_, state) => {
+  todaysForecast.value = state.hourlyWeather;
+});
 </script>
 
 <style lang="scss" scoped>
@@ -27,8 +56,12 @@ console.log(todaysForecast);
   &__wrapper {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    justify-content: space-evenly;
+    justify-content: space-between;
     align-items: center;
+    margin-top: 20px;
+    @include xs {
+      grid-template-columns: repeat(4, 1fr);
+    }
   }
   &__item {
     padding: 0 10px;
@@ -40,6 +73,11 @@ console.log(todaysForecast);
     &:last-of-type {
       border-right: none;
     }
+
+    img {
+      width: 40px;
+    }
   }
 }
-</style>../stores/weather
+</style>
+

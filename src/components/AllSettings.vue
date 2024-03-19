@@ -34,9 +34,14 @@ const allUnits = ref([
 ]);
 
 const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
-const setUnit = (unit, value) => {
-  weather.setUnit(unit, value);
+
+const setUnit = async (unit, value) => {
+  if (value !== units[unit].name) {
+    weather.setUnit(unit, value);
+    weather.fetchAllWeather();
+  }
 };
+
 </script>
 
 <style lang="scss" scoped>
@@ -83,4 +88,4 @@ const setUnit = (unit, value) => {
     }
   }
 }
-</style>../stores/weather
+</style>

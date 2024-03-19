@@ -1,7 +1,8 @@
 <template>
   <Card class="air-conditions">
     AIR CONDITIONS
-    <div v-if="airConditions.length > 0" class="air-conditions__wrapper">
+    <AirConditionsSkeleton v-if="weather.loading" />
+    <div v-else-if="airConditions.length > 0" class="air-conditions__wrapper">
       <div v-for="item in airConditions" :key="item.name" class="air-conditions__item">
         <Component :is="item.icon" class="icon" />
         <div>
@@ -17,67 +18,53 @@
 </template>
 
 <script setup>
-import { reactive, defineAsyncComponent } from 'vue';
+import { shallowRef, defineAsyncComponent } from 'vue';
+import { temperatureSymbol } from '../utils/helper';
 import Card from './CardComponent.vue';
 import useWeather from '../stores/weatherStore';
+import AirConditionsSkeleton from './skeletons/AirConditionsSkeleton.vue';
 
 const weather = useWeather();
-const airConditions = reactive([]);
+const airConditions = shallowRef([]);
+const unit = weather.getUnit;
+const currentStandard = weather.unitStandards[unit];
 
 const fetchSvg = (icon) => defineAsyncComponent(() => import(`../assets/images/${icon}.svg`));
 
 const mapAirDataNames = {
   realFeel: 'Real Feel',
   windSpeed: 'Wind',
-  rain: 'Chance of Rain',
+  humidity: 'Humidity',
   visibility: 'Visibility'
+};
+const getAirDataUnit = {
+  realFeel: temperatureSymbol(weather.unitSettings.temperature),
+  windSpeed: currentStandard.windSpeed,
+  humidity: currentStandard.humidity,
+  visibility: '',
 };
 
 const getAirDataImages = {
   realFeel: fetchSvg('thermometer'),
   windSpeed: fetchSvg('wind'),
-  rain: fetchSvg('rain'),
+  humidity: fetchSvg('rain'),
   visibility: fetchSvg('sun')
 };
 
 
 const populateAirData = (airData) => {
   if (!airData.windSpeed && !airData.visibility) return
-  Object.entries(airData).forEach(([key, value]) => {
-    airConditions.push({
-      value,
+  airConditions.value = Object.entries(airData)
+    .map(([key, value]) => ({
+      value: `${value} ${getAirDataUnit[key]}`,
       name: mapAirDataNames[key],
       icon: getAirDataImages[key]
-    });
-  });
+    }));
 };
 
 weather.$subscribe((_, state) => {
   populateAirData(state.currentAirData);
 })
-
-// const airConditions2 = shallowRef([
-//   {
-//     name: 'Real Feel',
-//     value: '30˚',
-//     icon: fetchSvg('thermometer'),
-//   },
-//   {
-//     name: 'Wind',
-//     value: '0.2 Km/h',
-//     icon: fetchSvg('wind'),
-//   },
-//   {
-//     name: 'Chance of Rain',
-//     value: '0%',
-//     icon: fetchSvg('rain'),
-//   },
-//   {
-//     name: 'UV Index',
-//     value: '3',
-//     icon: fetchSvg('sun'),
-//   },
-// ]);
 </script>
 
 <style lang="scss" scoped>
@@ -91,7 +78,7 @@ weather.$subscribe((_, state) => {
     grid-gap: 10px;
     justify-content: flex-start;
     align-items: flex-start;
-    margin-top: 10px;
+    margin-top: 20px;
   }
 
   &__item {
@@ -107,7 +94,6 @@ weather.$subscribe((_, state) => {
     .icon {
       height: 40px;
       margin-right: 10px;
-      margin-top: 20px;
     }
   }
 }

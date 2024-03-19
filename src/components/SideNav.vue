@@ -58,7 +58,8 @@ const navItems = shallowRef([
   align-items: center;
   width: 100px;
   background: var(--card-bg);
-  height: 95vh;
+  min-height: 95vh;
+  height: 100%;
   border-radius: 20px;
   @include md {
     position: fixed;

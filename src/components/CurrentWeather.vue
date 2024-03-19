@@ -1,30 +1,50 @@
 <template>
   <div class="current-weather">
     <div class="conditions">
-      <h1>{{ weather.getCurrentCity.name }}</h1>
+      <h1 ref="title">{{ `${city.name}, ${city.country}` }}</h1>
       <p v-if="currentWeather.rain">Chance of rain {{ currentWeather.rain }}%</p>
-      <p>Humidity: {{ currentWeather.humidity }}</p>
-      <p>{{ capitalize(currentWeather.description) }}</p>
+      <h>{{ capitalize(currentWeather.description) }}</h>
+      <div class="time">
+        <h3>{{ currentWeather.date }}</h3>
+        <button @click="refreshData">Refresh</button>
+      </div>
       <h1 class="temp">{{ currentWeather.temperature + '' + symbol }}</h1>
     </div>
     <div>
-      <img :src="weatherIcon" alt="Sun">
+      <img :src="currentWeather.icon" alt="Icon">
     </div>
   </div>
 </template>
 
 <script setup>
-import { shallowRef } from 'vue';
+import { ref, shallowRef, onMounted } from 'vue';
 import useWeather from '../stores/weatherStore';
-import { getWeatherIcon, capitalize } from '../utils/helper';
+import { getWeatherIcon, capitalize, temperatureSymbol } from '../utils/helper';
 
+const title = ref(null);
 const weather = useWeather();
-const currentWeather = weather.currentWeather;
-const symbol = weather.unitSettings.temperature.symbol + weather.unitSettings.temperature.name.slice(0, 1);
-const weatherIcon = shallowRef(getWeatherIcon(currentWeather.icon, '4x'));
+const currentWeather = shallowRef(weather.currentWeather);
+const city = shallowRef(weather.getCurrentCity);
+
+const symbol = temperatureSymbol(weather.unitSettings.temperature);
+
+const setTextSize = () => {
+  const text = `${city.value.name}, ${city.value.country}`;
+  title.value.style.fontSize = text.length > 15 ? '25px' : '35px';
+}
+
+const refreshData = () => {
+  weather.setCurrentWeather(weather.getCurrentCity);
+}
+
+onMounted(() => {
+  setTextSize();
+  refreshData();
+})
 
 weather.$subscribe((_, state) => {
-  weatherIcon = getWeatherIcon(state.currentWeather.icon, '4x');
+  currentWeather.value = state.currentWeather;
+  city.value = state.cities[0];
 })
 </script>
 
@@ -47,6 +67,7 @@ weather.$subscribe((_, state) => {
       margin: 0;
       margin-bottom: 10px;
       font-size: 35px;
+      max-width: 300px;
     }
     .temp {
       margin-top: 10vh;
@@ -55,6 +76,29 @@ weather.$subscribe((_, state) => {
 
   img {
     width: clamp(250px, 30vh, 40vh);
+    @include sm {
+      width: 150px;
+    }
+    @include xs {
+      margin-left: -50px;
+      width: 150px;
+    }
   }
 }
+
+.time {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+
+  button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background: var(--card-bg);
+    color: #eee;
+    border: none;
+    border-radius: 5px;
+  }
+}
+
 </style>

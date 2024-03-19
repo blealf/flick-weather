@@ -11,6 +11,9 @@
   @media (max-width: 1200px) { @content; }
 }
 @mixin xl {
+  @media (max-width: 1200px) { @content; }
+}
+@mixin xxl {
   @media (max-width: 1800px) { @content; }
 }
 
