@@ -62,7 +62,7 @@ weather.$subscribe((_, state) => {
     }
   }
   &__item {
-    padding: 0 10px;
+    padding: 0 5px;
     border-right: 2px solid #444;
     display: flex;
     flex-direction: column;
