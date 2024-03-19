@@ -12,7 +12,6 @@
 </template>
 
 <script setup>
-import axios from 'axios';
 import * as allCities from 'cities.json';
 import { useRoute } from 'vue-router';
 import { ref, watch, defineAsyncComponent } from 'vue';
@@ -43,7 +42,9 @@ const fetchCities = async () => {
 
     citiesResults.value.splice(0);
     citiesResults.value.push(...cities);
-  } catch (error) {}
+  } catch (error) {
+    //
+  }
 };
 
 const debounce = (func, delay) => {
@@ -62,16 +63,16 @@ const debounceFetchCities = debounce(fetchCities, 1000);
 
 const selectCity = async (city) => {
   selectedCity.value = city;
-  await weather.setCurrentCity(city, route.path === "/");
+  await weather.setCurrentCity(city, route.path === '/');
   await weather.setCurrentWeather({ city })
     .then(async (coord) => {
-      await weather.setHourlyForecast(coord)
-    })
+      await weather.setHourlyForecast(coord);
+    });
   clearInput();
 };
 
 watch(search, (newVal, preVal) => {
-  loading.value = true
+  loading.value = true;
   showClearButton.value = newVal;
   searchResultsBox.value.style.display = newVal ? 'flex' : 'none';
   if (newVal.length === 0) clearInput();
@@ -140,6 +141,5 @@ watch(search, (newVal, preVal) => {
     background: var(--card-bg);
   }
 }
-
 
 </style>

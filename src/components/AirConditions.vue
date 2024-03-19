@@ -35,7 +35,7 @@ const mapAirDataNames = {
   realFeel: 'Real Feel',
   windSpeed: 'Wind',
   humidity: 'Humidity',
-  visibility: 'Visibility'
+  visibility: 'Visibility',
 };
 const getAirDataUnit = {
   realFeel: temperatureSymbol(weather.unitSettings.temperature),
@@ -48,23 +48,22 @@ const getAirDataImages = {
   realFeel: fetchSvg('thermometer'),
   windSpeed: fetchSvg('wind'),
   humidity: fetchSvg('rain'),
-  visibility: fetchSvg('sun')
+  visibility: fetchSvg('sun'),
 };
 
-
 const populateAirData = (airData) => {
-  if (!airData.windSpeed && !airData.visibility) return
+  if (!airData.windSpeed && !airData.visibility) return;
   airConditions.value = Object.entries(airData)
     .map(([key, value]) => ({
       value: `${value} ${getAirDataUnit[key]}`,
       name: mapAirDataNames[key],
-      icon: getAirDataImages[key]
+      icon: getAirDataImages[key],
     }));
 };
 
 weather.$subscribe((_, state) => {
   populateAirData(state.currentAirData);
-})
+});
 </script>
 
 <style lang="scss" scoped>

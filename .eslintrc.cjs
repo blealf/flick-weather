@@ -30,6 +30,7 @@ module.exports = {
     'vue',
   ],
   rules: {
-    'import/no-extraneous-dependencies': [],
+    'no-param-reassign': 0,
   },
+  ignorePatterns: ['*.cy.js'],
 };

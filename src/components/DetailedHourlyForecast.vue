@@ -8,7 +8,7 @@
           <p>{{ item.weather }}</p>
           <img :src="item.icon" alt="" width="60">
         </div>
-        <p>{{ item.minTemp }}/{{ item.maxTemp }}</p>
+        <p>{{ item.minTemp + symbol }}/{{ item.maxTemp+ symbol }}</p>
       </div>
     </div>
   </Card>
@@ -18,12 +18,12 @@
 import { ref } from 'vue';
 import Card from './CardComponent.vue';
 import useWeather from '../stores/weatherStore';
-import { getWeatherIcon } from '../utils/helper';
+import { temperatureSymbol } from '../utils/helper';
 
 const weather = useWeather();
 
 const todaysForecast = ref(weather.hourlyWeather);
-const symbol = weather.unitSettings.temperature.symbol + weather.unitSettings.temperature.name.charAt(0).toUpperCase();
+const symbol = temperatureSymbol(weather.unitSettings.temperature);
 
 weather.$subscribe((_, state) => {
   todaysForecast.value = state.hourlyWeather;

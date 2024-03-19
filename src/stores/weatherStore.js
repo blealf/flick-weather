@@ -10,6 +10,10 @@ import {
 const useWeather = defineStore('weather', {
   state: () => ({
     loading: false,
+    error: {
+      current: null,
+      hourly: null,
+    },
     geoLocation: {
       lat: null,
       lon: null,
@@ -69,8 +73,8 @@ const useWeather = defineStore('weather', {
       return this.cities[0];
     },
     getUnit() {
-      return this.unitSettings.temperature.name === "Celsius" ? 'metric' : 'imperial';
-    }
+      return this.unitSettings.temperature.name === 'Celsius' ? 'metric' : 'imperial';
+    },
   },
 
   actions: {
@@ -79,12 +83,12 @@ const useWeather = defineStore('weather', {
     },
     async setCurrentCity(value, isHome = false) {
       const filterCities = await this.cities.filter(
-        (city) => JSON.stringify(city) !== JSON.stringify(value));
+        (city) => JSON.stringify(city) !== JSON.stringify(value),
+      );
       this.cities.splice(0);
       if (isHome) {
         this.cities.push(value, ...filterCities);
-      }
-      else {
+      } else {
         this.cities.push(...filterCities, value);
       }
     },
@@ -97,44 +101,43 @@ const useWeather = defineStore('weather', {
       await this.setCurrentWeather({ city: this.getCurrentCity, position })
         .then(async (coord) => {
           await this.setHourlyForecast(coord);
-        })
+        });
     },
     async setCurrentWeather({ city, position }) {
-      return new Promise(async (resolve, reject) => {
-        this.loading = true
-        
+      return new Promise((resolve) => {
+        this.loading = true;
+
         const cityName = city?.name || this.getCurrentCity.name;
         const countryCode = city?.country || this.getCurrentCity.country;
-        
+
         try {
-          const fetchURL =
-            `${openWeatherBaseUrl}/weather?q=${cityName},${countryCode}&appid=${openWeatherApiKey}&units=${this.getUnit}`;
-          const fetchWithCoordinates =
-            `${openWeatherBaseUrl}/weather?lat=${this.geoLocation.lat}&lon=${this.geoLocation.lon}&appid=${openWeatherApiKey}&units=${this.getUnit}`
-          
-          const { data } = await axios.get(
+          const fetchURL = `${openWeatherBaseUrl}/weather?q=${cityName},${countryCode}&appid=${openWeatherApiKey}&units=${this.getUnit}`;
+          const fetchWithCoordinates = `${openWeatherBaseUrl}/weather?lat=${this.geoLocation.lat}&lon=${this.geoLocation.lon}&appid=${openWeatherApiKey}&units=${this.getUnit}`;
+
+          axios.get(
             position ? fetchWithCoordinates : fetchURL,
             {
               mode: 'no-cors',
               contentType: 'application/json',
             },
-          );
-  
-          this.cities.unshift({ name: data.name, country: data.sys.country });
-          await assignCurrentData(data, this);
-          this.geoLocation.lat = data.coord.lat;
-          this.geoLocation.lat = data.coord.lon;
-          resolve(data.coord);
-        } catch (error) {}
-        this.loading = false
-      })
+          ).then(({ data }) => {
+            this.cities.unshift({ name: data.name, country: data.sys.country });
+            assignCurrentData(data, this);
+            this.geoLocation.lat = data.coord.lat;
+            this.geoLocation.lat = data.coord.lon;
+            resolve(data.coord);
+          });
+        } catch (error) {
+          this.error.current = error;
+        }
+        this.loading = false;
+      });
     },
     async setHourlyForecast({ lat, lon }) {
-      this.loading = true
+      this.loading = true;
       try {
-        const fetchWithCoordinates =
-          `${openWeatherBaseUrl}/forecast?lat=${lat}&lon=${lon}&cnt=9&appid=${openWeatherApiKey}&units=${this.getUnit}`;
-        
+        const fetchWithCoordinates = `${openWeatherBaseUrl}/forecast?lat=${lat}&lon=${lon}&cnt=9&appid=${openWeatherApiKey}&units=${this.getUnit}`;
+
         const { data } = await axios.get(
           fetchWithCoordinates,
           {
@@ -143,8 +146,10 @@ const useWeather = defineStore('weather', {
           },
         );
         mapAndAddHourly(data.list, this);
-      } catch (error) {}
-      this.loading = false
+      } catch (error) {
+        this.error.hourly = error;
+      }
+      this.loading = false;
     },
   },
 });

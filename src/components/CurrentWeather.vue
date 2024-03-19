@@ -19,7 +19,7 @@
 <script setup>
 import { ref, shallowRef, onMounted } from 'vue';
 import useWeather from '../stores/weatherStore';
-import { getWeatherIcon, capitalize, temperatureSymbol } from '../utils/helper';
+import { capitalize, temperatureSymbol } from '../utils/helper';
 
 const title = ref(null);
 const weather = useWeather();
@@ -31,21 +31,22 @@ const symbol = temperatureSymbol(weather.unitSettings.temperature);
 const setTextSize = () => {
   const text = `${city.value.name}, ${city.value.country}`;
   title.value.style.fontSize = text.length > 15 ? '25px' : '35px';
-}
+};
 
 const refreshData = () => {
   weather.setCurrentWeather(weather.getCurrentCity);
-}
+};
 
 onMounted(() => {
   setTextSize();
   refreshData();
-})
+});
 
 weather.$subscribe((_, state) => {
   currentWeather.value = state.currentWeather;
-  city.value = state.cities[0];
-})
+  const { cities: [val] } = state;
+  city.value = val;
+});
 </script>
 
 <style lang="scss" scoped>

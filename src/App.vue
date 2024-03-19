@@ -22,11 +22,11 @@ const usePosition = async (position) => {
   const { longitude: lon, latitude: lat } = position.coords;
   await weather.setPosition({
     longitude: position.coords.longitude,
-    latitude: position.coords.latitude
+    latitude: position.coords.latitude,
   });
 
   await weather.fetchAllWeather({ lon, lat });
-}
+};
 
 onMounted(async () => {
   if (navigator.geolocation) {
