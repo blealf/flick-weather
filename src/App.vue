@@ -1,40 +1,60 @@
 <template>
   <div class="app">
     <SideNav />
-    <div>
-      <SearchCity v-if="route.path !== '/settings'" />
+    <div v-if="weather.getCurrentCity">
+      <SearchCity v-if="route.path !== '/settings'" @geo-locate="getLocationAndFetch" />
       <RouterView />
+    </div>
+    <div v-else>
+      <NoCity>
+        <SearchCity v-if="route.path !== '/settings'" @geo-locate="getLocationAndFetch" />
+      </NoCity>
     </div>
   </div>
 </template>
 
 <script setup>
 import { useRoute } from 'vue-router';
-import { onMounted, nextTick } from 'vue';
+import { onMounted } from 'vue';
 import SideNav from './components/SideNav.vue';
 import SearchCity from './components/SearchCity.vue';
 import useWeather from './stores/weatherStore';
+import NoCity from './components/NoCity.vue';
 
 const route = useRoute();
 const weather = useWeather();
 
-const usePosition = async (position) => {
-  const { longitude: lon, latitude: lat } = position.coords;
-  await weather.setPosition({
-    longitude: position.coords.longitude,
-    latitude: position.coords.latitude,
-  });
+const getStoredValues = async () => {
+  const [localCity, localUnit] = await [localStorage.getItem('city'), localStorage.getItem('unit')];
+  const city = localCity ? JSON.parse(localCity) : null;
+  const unit = localUnit || weather.getUnit;
+  weather.setUnit('temperature', unit === 'metric' ? 'Celsius' : 'Fahrenheit');
+  return {
+    city, unit,
+  };
+};
 
-  await weather.fetchAllWeather({ lon, lat });
+const usePosition = async (position) => {
+  const { unit } = getStoredValues();
+  const { longitude: lon, latitude: lat } = position.coords;
+
+  await weather.setPosition({ longitude: lon, latitude: lat });
+  await weather.fetchAllWeather({ position: { lon, lat }, unit });
+};
+
+const getLocationAndFetch = async () => {
+  if (navigator.geolocation) {
+    await navigator.geolocation.getCurrentPosition(usePosition);
+  }
 };
 
 onMounted(async () => {
-  if (navigator.geolocation) {
-    await navigator.geolocation.getCurrentPosition(usePosition);
-  } else {
-    // await weather.setCurrentWeather({ city: weather.getCurrentCity });
-  }
+  const { city, unit } = await getStoredValues();
+  if (city) return weather.fetchAllWeather({ city, unit });
+
+  await getLocationAndFetch();
 });
+
 </script>
 
 <style lang="scss" scoped>

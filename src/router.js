@@ -1,6 +1,6 @@
 import { createMemoryHistory, createRouter } from 'vue-router';
 import { nextTick } from 'vue';
-import Home from './components/HomePath.vue';
+import Home from './components/HomeUI.vue';
 import Cities from './components/CitiesList.vue';
 import Settings from './components/AllSettings.vue';
 import { appTitle } from './utils/helper';

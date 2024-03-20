@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, shallowRef } from 'vue';
 import Card from './CardComponent.vue';
 import useWeather from '../stores/weatherStore';
 import { temperatureSymbol } from '../utils/helper';
@@ -23,10 +23,11 @@ import { temperatureSymbol } from '../utils/helper';
 const weather = useWeather();
 
 const todaysForecast = ref(weather.hourlyWeather);
-const symbol = temperatureSymbol(weather.unitSettings.temperature);
+const symbol = shallowRef(temperatureSymbol(weather.unitSettings.temperature));
 
 weather.$subscribe((_, state) => {
   todaysForecast.value = state.hourlyWeather;
+  symbol.value = temperatureSymbol(state.unitSettings.temperature);
 });
 </script>
 

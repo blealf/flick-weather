@@ -1,7 +1,10 @@
 <template>
     <div class="search">
       <input v-model="search" type="text" placeholder="Enter City" />
-      <ClearButton v-if="showClearButton" class="clear" @click="clearInput" />
+      <div class="input-icons">
+        <ClearButton v-if="showClearButton" class="clear" @click="clearInput" />
+        <LocateButton class="locate" @click="emit('geo-locate')" />
+      </div>
       <div v-if="search.length > 0" class="suggestion">
         <p v-show="loading" class="loading"></p>
         <p v-for="city in citiesResults" :key="city.name" @click="selectCity(city)">
@@ -13,12 +16,13 @@
 
 <script setup>
 import { useRoute } from 'vue-router';
-import { h, ref, watch, defineAsyncComponent, nextTick, onMounted } from 'vue';
-import useWeather from '../stores/weatherStore';
+import {
+  ref, watch, defineAsyncComponent, nextTick, onMounted, defineEmits,
+} from 'vue';
 import { useLoading } from 'vue-loading-overlay';
+import useWeather from '../stores/weatherStore';
 
 const weather = useWeather();
-const searchResultsBox = ref(null);
 const citiesResults = ref([]);
 const search = ref('');
 const showClearButton = ref(false);
@@ -28,6 +32,7 @@ const allCities = ref([]);
 const route = useRoute();
 
 const ClearButton = defineAsyncComponent(() => import('../assets/images/cancel.svg'));
+const LocateButton = defineAsyncComponent(() => import('../assets/images/location.svg'));
 
 // Wait for all cities to load before showing the app
 const $loading = useLoading({
@@ -41,14 +46,14 @@ const $loading = useLoading({
 });
 
 onMounted(() => {
-  const loader = $loading.show()
+  const loader = $loading.show();
   nextTick(async () => {
-    const { default: data } = await import("cities.json")
-    allCities.value = data
-    loading.value = false
+    const { default: data } = await import('cities.json');
+    allCities.value = data;
+    loading.value = false;
     loader.hide();
-  })
-})
+  });
+});
 
 const clearInput = () => {
   search.value = '';
@@ -102,11 +107,13 @@ const selectCity = async (city) => {
   clearInput();
 };
 
+const emit = defineEmits(['geo-locate']);
+
 watch(search, (newVal, preVal) => {
   loading.value = true;
   showClearButton.value = newVal;
   if (newVal.length === 0) clearInput();
-  if (newVal !== preVal && newVal.length >= 3) debounceFetchCities();
+  if (newVal !== preVal && newVal.length >= 2) debounceFetchCities();
 });
 </script>
 
@@ -128,12 +135,26 @@ watch(search, (newVal, preVal) => {
     background: var(--card-bg);
     font-size: 18px;
   }
-  .clear {
+  .input-icons {
     position: absolute;
-    right: -10px;;
-    top: 12px;
-    height: 25px;
-    cursor: pointer;
+    right: 5px;;
+    top: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    /* border: 1px solid red; */
+    gap: 10px;
+    .clear {
+      width: 20px;
+      cursor: pointer;
+    }
+    .locate {
+      width: 35px;
+      height: 100%;
+      padding-left: 5px;
+      border-left: 1px solid var(--main-bg);
+      cursor: pointer;
+    }
   }
   .suggestion {
     position: absolute;

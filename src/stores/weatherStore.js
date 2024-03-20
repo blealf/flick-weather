@@ -18,7 +18,7 @@ const useWeather = defineStore('weather', {
       lat: null,
       lon: null,
     },
-    cities: [{ name: 'London', country: 'GB' }],
+    cities: [],
     currentAirData: {
       realFeel: '',
       windSpeed: '',
@@ -80,6 +80,7 @@ const useWeather = defineStore('weather', {
   actions: {
     async setUnit(unit, value) {
       this.unitSettings[unit].name = value;
+      localStorage.setItem('unit', this.getUnit);
     },
     async setCurrentCity(value, isHome = false) {
       const filterCities = await this.cities.filter(
@@ -91,28 +92,36 @@ const useWeather = defineStore('weather', {
       } else {
         this.cities.push(...filterCities, value);
       }
+      localStorage.setItem('city', JSON.stringify(value));
     },
     setPosition(position) {
       const { longitude, latitude } = position;
       this.geoLocation.lon = longitude;
       this.geoLocation.lat = latitude;
     },
-    async fetchAllWeather(position) {
-      await this.setCurrentWeather({ city: this.getCurrentCity, position })
+    async fetchAllWeather({ position, city, unit }) {
+      await this.setCurrentWeather({
+        city: city || this.getCurrentCity,
+        position: position || null,
+        unit: unit || this.getUnit,
+      })
         .then(async (coord) => {
           await this.setHourlyForecast(coord);
         });
     },
-    async setCurrentWeather({ city, position }) {
+    async setCurrentWeather({ city, position, unit }) {
       return new Promise((resolve) => {
         this.loading = true;
 
-        const cityName = city?.name || this.getCurrentCity.name;
-        const countryCode = city?.country || this.getCurrentCity.country;
+        const localCity = localStorage.getItem('city') ? JSON.parse(localStorage.getItem('city')) : null;
+        const useCity = city || localCity;
+        const cityName = useCity?.name || this.getCurrentCity?.name;
+        const countryCode = useCity?.country || this.getCurrentCity?.country;
+        const useUnit = unit || this.getUnit;
 
         try {
-          const fetchURL = `${openWeatherBaseUrl}/weather?q=${cityName},${countryCode}&appid=${openWeatherApiKey}&units=${this.getUnit}`;
-          const fetchWithCoordinates = `${openWeatherBaseUrl}/weather?lat=${this.geoLocation.lat}&lon=${this.geoLocation.lon}&appid=${openWeatherApiKey}&units=${this.getUnit}`;
+          const fetchURL = `${openWeatherBaseUrl}/weather?q=${cityName},${countryCode}&appid=${openWeatherApiKey}&units=${useUnit}`;
+          const fetchWithCoordinates = `${openWeatherBaseUrl}/weather?lat=${this.geoLocation.lat}&lon=${this.geoLocation.lon}&appid=${openWeatherApiKey}&units=${useUnit}`;
 
           axios.get(
             position ? fetchWithCoordinates : fetchURL,
@@ -120,8 +129,9 @@ const useWeather = defineStore('weather', {
               mode: 'no-cors',
               contentType: 'application/json',
             },
-          ).then(({ data }) => {
+          ).then(async ({ data }) => {
             this.cities.unshift({ name: data.name, country: data.sys.country });
+            localStorage.setItem('city', JSON.stringify(this.cities[0]));
             assignCurrentData(data, this);
             this.geoLocation.lat = data.coord.lat;
             this.geoLocation.lat = data.coord.lon;

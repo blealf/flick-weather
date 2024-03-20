@@ -31,7 +31,7 @@ module.exports = {
   ],
   rules: {
     'no-param-reassign': 0,
-    'import/no-extraneous-dependencies': [false, { devDependencies: false, optionalDependencies: false, peerDependencies: false }],
+    'import/no-extraneous-dependencies': ['off', { devDependencies: false, optionalDependencies: false, peerDependencies: false }],
   },
   ignorePatterns: ['*.cy.js'],
 };

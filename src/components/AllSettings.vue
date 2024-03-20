@@ -14,7 +14,7 @@
           </div>
         </div>
       </CardComponent>
-      <CardComponent></CardComponent>
+      <DetailedHourlyForecast></DetailedHourlyForecast>
     </div>
   </div>
 </template>
@@ -23,6 +23,7 @@
 import { ref } from 'vue';
 import useWeather from '../stores/weatherStore';
 import CardComponent from './CardComponent.vue';
+import DetailedHourlyForecast from './DetailedHourlyForecast.vue';
 
 const weather = useWeather();
 const units = weather.unitSettings;
@@ -38,7 +39,7 @@ const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
 const setUnit = async (unit, value) => {
   if (value !== units[unit].name) {
     weather.setUnit(unit, value);
-    weather.fetchAllWeather();
+    weather.fetchAllWeather({ unit });
   }
 };
 
@@ -57,7 +58,7 @@ const setUnit = async (unit, value) => {
     margin-top: 20px;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     gap: 20px;
     @include md {
       flex-direction: column;
