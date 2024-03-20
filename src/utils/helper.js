@@ -25,12 +25,12 @@ export const mapAndAddHourly = (data, state) => {
 };
 
 export const assignCurrentData = (data, state) => {
-  state.currentAirData.realFeel = data.main.feels_like;
+  state.currentAirData.realFeel = data.main.feels_like.toFixed(0);
   state.currentAirData.visibility = data.visibility;
   state.currentAirData.windSpeed = data.wind.speed;
   state.currentAirData.humidity = data.main.humidity;
 
-  state.currentWeather.temperature = data.main.temp;
+  state.currentWeather.temperature = data.main.temp.toFixed(0);
   state.currentWeather.pressure = data.main.pressure;
   state.currentWeather.date = dayjs(1710852178).format('hh:mm A');
   state.currentWeather.icon = getWeatherIcon(data.weather[0].icon, '4x');
