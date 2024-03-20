@@ -1,5 +1,9 @@
 <template>
-  <div class="app" :data-theme="appData.getTheme">
+  <div
+    class="app"
+    :class="{ 'light' : appData.getTheme === 'light'}"
+    :data-theme="appData.getTheme"
+  >
     <SideNav />
     <div v-if="weather.getCurrentCity">
       <SearchCity v-if="route.path !== '/settings'" @geo-locate="getLocationAndFetch" />
