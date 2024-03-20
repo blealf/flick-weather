@@ -1,5 +1,5 @@
 <template>
-  <div class="card" :style="{ padding: padding ? padding : '30px'}">
+  <div class="card-comp" :style="{ padding: padding ? padding : '30px'}">
     <slot />
   </div>
 </template>
@@ -12,9 +12,14 @@ const padding = null;
 </script>
 
 <style lang="scss" scoped>
-.card {
+.card-comp {
   border-radius: 20px;
   background: var(--card-bg);
+  box-shadow: var(--shadow);
   width: 100%;
+  padding: 30px 30px !important;
+  @include xs {
+    padding: 30px 15px !important;
+  }
 }
 </style>

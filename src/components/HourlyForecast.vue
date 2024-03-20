@@ -9,7 +9,7 @@
         class="forecast__item"
       >
         <p>{{ item.time }}</p>
-        <img :src="item.icon" alt="3-hr" />
+        <img :src="item.icon" alt="3-hr" class="weather-icon" />
         <h3>{{ item.temp }} {{ symbol }}</h3>
       </div>
     </div>
@@ -67,6 +67,14 @@ weather.$subscribe((_, state) => {
     align-items: center;
     &:last-of-type {
       border-right: none;
+    }
+
+    p {
+      font-size: 16px;
+
+      @include xs {
+        font-size: 14px;
+      }
     }
 
     img {

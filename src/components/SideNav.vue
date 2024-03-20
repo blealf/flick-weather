@@ -60,6 +60,7 @@ const navItems = shallowRef([
   background: var(--card-bg);
   min-height: 95vh;
   border-radius: 20px;
+  box-shadow: var(--shadow);
   @include md {
     position: fixed;
     width: calc(100vw - 40px);
@@ -69,7 +70,6 @@ const navItems = shallowRef([
     flex-direction: row;
     bottom: 0;
     border-radius: 10px;
-    box-shadow: var(--shadow);
   }
   .logo {
     margin-top: 30px;
@@ -114,7 +114,7 @@ const navItems = shallowRef([
       p {
         margin-top: 2px;
         margin-bottom: 40px;
-        color: lightgray;
+        color: var(--alt-color);
       }
       @include md {
         p {
@@ -125,7 +125,7 @@ const navItems = shallowRef([
     .active {
       p {
         font-weight: bold;
-        color: #fff;
+        color: var(--active-color);
         font-size: 20px;
       }
     }

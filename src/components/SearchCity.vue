@@ -122,6 +122,9 @@ watch(search, (newVal, preVal) => {
   position: relative;
   margin: 20px 0;
   width: 40vw;
+  border-radius: 5px;
+  box-shadow: var(--shadow);
+
   @include sm {
     width: 90vw;
   }

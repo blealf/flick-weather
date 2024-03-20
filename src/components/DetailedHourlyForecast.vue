@@ -6,7 +6,7 @@
         <p>{{ item.time }}</p>
         <div class="weather">
           <p>{{ item.weather }}</p>
-          <img :src="item.icon" alt="" width="60">
+          <img :src="item.icon" alt="Icon" width="60"  class="weather-icon" />
         </div>
         <p>{{ item.minTemp + symbol }}/{{ item.maxTemp+ symbol }}</p>
       </div>

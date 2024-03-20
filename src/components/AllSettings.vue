@@ -13,6 +13,16 @@
             ">{{ value }}</p>
           </div>
         </div>
+        <div class="unit">
+          <p>Theme</p>
+          <div class="value" >
+            <p
+              v-for="value in themes" :key="value"
+              :class="{ active: appData.getTheme === value}"
+              @click="appData.toggleTheme"
+            >{{ value }}</p>
+          </div>
+        </div>
       </CardComponent>
       <DetailedHourlyForecast></DetailedHourlyForecast>
     </div>
@@ -20,8 +30,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { shallowRef, ref } from 'vue';
 import useWeather from '../stores/weatherStore';
+import useData from '../stores/dataStore';
 import CardComponent from './CardComponent.vue';
 import DetailedHourlyForecast from './DetailedHourlyForecast.vue';
 
@@ -33,6 +44,9 @@ const allUnits = ref([
     values: ['Celsius', 'Fahrenheit'],
   },
 ]);
+
+const appData = useData();
+const themes = shallowRef(['light', 'dark']);
 
 const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
 
@@ -65,9 +79,6 @@ const setUnit = async (unit, value) => {
     }
   }
 
-  .unit {
-    /*  */
-  }
   .value {
     margin-top: 10px;
     border-radius: 10px;

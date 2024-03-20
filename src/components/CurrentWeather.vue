@@ -11,7 +11,7 @@
       <h1 class="temp">{{ currentWeather.temperature + '' + symbol }}</h1>
     </div>
     <div>
-      <img :src="currentWeather.icon" alt="Icon">
+      <img :src="currentWeather.icon" alt="Icon"  class="weather-icon" />
     </div>
   </div>
 </template>
@@ -82,7 +82,7 @@ weather.$subscribe((_, state) => {
     }
     @include xs {
       margin-left: -50px;
-      width: 150px;
+      width: 120px;
     }
   }
 }
@@ -91,6 +91,7 @@ weather.$subscribe((_, state) => {
   display: flex;
   justify-content: start;
   align-items: center;
+  margin-top: 10px;
 
   button {
     margin-left: 10px;
