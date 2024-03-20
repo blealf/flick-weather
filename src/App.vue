@@ -10,7 +10,7 @@
 
 <script setup>
 import { useRoute } from 'vue-router';
-import { onMounted } from 'vue';
+import { onMounted, nextTick } from 'vue';
 import SideNav from './components/SideNav.vue';
 import SearchCity from './components/SearchCity.vue';
 import useWeather from './stores/weatherStore';

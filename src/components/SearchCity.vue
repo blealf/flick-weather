@@ -33,11 +33,19 @@ const clearInput = () => {
   citiesResults.value.splice(0);
 };
 
+// return matches on search value anc cities repo
+const matchValues = (cityValue) => cityValue.name.toLowerCase().includes(search.value.toLowerCase())
+  || `${cityValue.name.toLowerCase()}${cityValue.country.toLowerCase()}`
+    .includes(search.value.toLowerCase().replace(' ', ''))
+  || `${cityValue.name.toLowerCase()},${cityValue.country.toLowerCase()}`
+    .includes(search.value.toLowerCase().replace(' ', ''));
+
+// get cities from search values
 const fetchCities = async () => {
   try {
     const cities = await allCities.default.filter(
-      (city) => city.name.toLowerCase().includes(search.value.toLowerCase()),
-    ).slice(0, 7)
+      (city) => matchValues(city),
+    ).slice(0, 20)
       .map((city) => ({ name: city.name, country: city.country }));
 
     citiesResults.value.splice(0);
@@ -47,6 +55,7 @@ const fetchCities = async () => {
   }
 };
 
+// Generic debounce function
 const debounce = (func, delay) => {
   let timeoutId;
   loading.value = true;
@@ -111,6 +120,8 @@ watch(search, (newVal, preVal) => {
     flex-direction: column;
     background: var(--card-bg);
     width: 100%;
+    max-height: 300px;
+    overflow-y: scroll;
     padding: 10px 5px 5px 5px;
 
     p {

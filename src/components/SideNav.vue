@@ -58,12 +58,13 @@ const navItems = shallowRef([
   align-items: center;
   width: 100px;
   background: var(--card-bg);
-  height: 100%;
+  min-height: 95vh;
   border-radius: 20px;
   @include md {
     position: fixed;
     width: calc(100vw - 40px);
     height: 60px;
+    min-height: 60px;
     margin: 0;
     flex-direction: row;
     bottom: 0;
