@@ -2,7 +2,7 @@
     <div class="search">
       <input v-model="search" type="text" placeholder="Enter City" />
       <ClearButton v-if="showClearButton" class="clear" @click="clearInput" />
-      <div ref="searchResultsBox" class="suggestion">
+      <div v-if="search.length > 0" class="suggestion">
         <p v-show="loading" class="loading"></p>
         <p v-for="city in citiesResults" :key="city.name" @click="selectCity(city)">
           {{ city.name + ', ' + city.country }}
@@ -12,21 +12,43 @@
 </template>
 
 <script setup>
-import * as allCities from 'cities.json';
 import { useRoute } from 'vue-router';
-import { ref, watch, defineAsyncComponent } from 'vue';
+import { h, ref, watch, defineAsyncComponent, nextTick, onMounted } from 'vue';
 import useWeather from '../stores/weatherStore';
+import { useLoading } from 'vue-loading-overlay';
 
 const weather = useWeather();
-const ClearButton = defineAsyncComponent(() => import('../assets/images/cancel.svg'));
 const searchResultsBox = ref(null);
 const citiesResults = ref([]);
 const search = ref('');
 const showClearButton = ref(false);
 const selectedCity = ref('');
-const loading = ref(false);
-
+const loading = ref(true);
+const allCities = ref([]);
 const route = useRoute();
+
+const ClearButton = defineAsyncComponent(() => import('../assets/images/cancel.svg'));
+
+// Wait for all cities to load before showing the app
+const $loading = useLoading({
+  color: '#eee',
+  loader: 'dots',
+  width: 100,
+  height: 100,
+  backgroundColor: 'var(--main-bg)',
+  opacity: 0.9,
+  zIndex: 999,
+});
+
+onMounted(() => {
+  const loader = $loading.show()
+  nextTick(async () => {
+    const { default: data } = await import("cities.json")
+    allCities.value = data
+    loading.value = false
+    loader.hide();
+  })
+})
 
 const clearInput = () => {
   search.value = '';
@@ -43,7 +65,7 @@ const matchValues = (cityValue) => cityValue.name.toLowerCase().includes(search.
 // get cities from search values
 const fetchCities = async () => {
   try {
-    const cities = await allCities.default.filter(
+    const cities = await allCities.value.filter(
       (city) => matchValues(city),
     ).slice(0, 20)
       .map((city) => ({ name: city.name, country: city.country }));
@@ -83,7 +105,6 @@ const selectCity = async (city) => {
 watch(search, (newVal, preVal) => {
   loading.value = true;
   showClearButton.value = newVal;
-  searchResultsBox.value.style.display = newVal ? 'flex' : 'none';
   if (newVal.length === 0) clearInput();
   if (newVal !== preVal && newVal.length >= 3) debounceFetchCities();
 });
@@ -116,7 +137,7 @@ watch(search, (newVal, preVal) => {
   }
   .suggestion {
     position: absolute;
-    display: none;
+    display: flex;
     flex-direction: column;
     background: var(--card-bg);
     width: 100%;

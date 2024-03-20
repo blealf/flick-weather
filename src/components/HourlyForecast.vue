@@ -2,7 +2,7 @@
   <Card>
     <h2>HOURLY FORECAST</h2>
 
-    <div class="forecast__wrapper">
+    <div v-if="todaysForecast.length > 1" class="forecast__wrapper">
       <div
         v-for="item in (isMobile ? todaysForecast.slice(1, 5) : todaysForecast.slice(1, 7))"
         :key="item.time"
@@ -22,10 +22,12 @@ import Card from './CardComponent.vue';
 import useWeather from '../stores/weatherStore';
 import { temperatureSymbol } from '../utils/helper';
 
+const weather = useWeather();
+const todaysForecast = ref(weather.hourlyWeather);
+const symbol = temperatureSymbol(weather.unitSettings.temperature);
+
 const isMobile = ref(false);
-
 const getWindowMatch = async () => window.matchMedia('(max-width: 599px)').matches;
-
 const updateIsMobile = async () => {
   isMobile.value = await getWindowMatch();
 };
@@ -38,11 +40,6 @@ onMounted(async () => {
 onUnmounted(async () => {
   window.removeEventListener('resize', updateIsMobile);
 });
-
-const weather = useWeather();
-
-const todaysForecast = ref(weather.hourlyWeather);
-const symbol = temperatureSymbol(weather.unitSettings.temperature);
 
 weather.$subscribe((_, state) => {
   todaysForecast.value = state.hourlyWeather;

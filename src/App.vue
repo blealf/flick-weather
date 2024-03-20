@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-    <sideNav />
+    <SideNav />
     <div>
       <SearchCity v-if="route.path !== '/settings'" />
       <RouterView />
