@@ -28,11 +28,13 @@
     align-items: flex-start;
     text-align: left;
     margin-top: 15px;
+    border-radius: 5px;
 
     .name {
       height: 15px;
       width: 50px;
       background: var(--main-bg);
+      border-radius: 3px;
     }
 
     .value {
@@ -40,6 +42,7 @@
       height: 35px;
       width: 70px;
       background: var(--main-bg);
+      border-radius: 3px;
     }
 
     .icon {

@@ -113,10 +113,12 @@ const useWeather = defineStore('weather', {
       })
         .then(async ({ coord, dt, timezone }) => {
           await this.setHourlyForecast(coord, { dt, timezone });
+        }).catch((error) => {
+          this.error.current = error;
         });
     },
     async setCurrentWeather({ city, position, unit }) {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
         this.loading = true;
 
         const localCity = localStorage.getItem('city') ? JSON.parse(localStorage.getItem('city')) : null;
@@ -142,8 +144,12 @@ const useWeather = defineStore('weather', {
             this.geoLocation.lat = data.coord.lat;
             this.geoLocation.lat = data.coord.lon;
             resolve({ coord: data.coord, dt: data.dt, timezone: data.timezone });
+          }).catch((error) => {
+            reject(error);
+            this.error.current = error;
           });
         } catch (error) {
+          reject(error);
           this.error.current = error;
         }
         this.loading = false;
