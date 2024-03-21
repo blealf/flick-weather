@@ -33,16 +33,15 @@ export const mapAndAddDaily = async ({ dt, timezone }, data, state) => {
   const timeToTwelve = (12 - Number(splitDate[0])
    + (Math.floor(59 / splitDate[1]))
    + (splitDate[2] === 'AM' ? 12 : 0));
-
-  const firstSplice = Math.floor((timeToTwelve) / 3) - 1;
-  const nextSplice = firstSplice + 7;
+  const firstSplice = Math.floor((timeToTwelve) / 3);
+  const nextSplice = firstSplice + 8;
 
   const dailyWeather = [...data.splice(0, 1), ...data.splice(firstSplice, 1)];
   for (let i = nextSplice - 1; i < data.length; i += (nextSplice - 1)) {
     dailyWeather.push(...data.splice(i, 1));
   }
 
-  state.dailyWeather = await dailyWeather.map((item) => (assignItem(item, 'ddd - hh:mm A')));
+  state.dailyWeather = await dailyWeather.map((item) => (assignItem(item, 'ddd')));
 };
 
 export const assignCurrentData = (data, state) => {
