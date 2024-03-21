@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import axios from 'axios';
 import {
   mapAndAddHourly,
+  mapAndAddDaily,
   assignCurrentData,
   openWeatherBaseUrl,
   openWeatherApiKey,
@@ -34,6 +35,11 @@ const useWeather = defineStore('weather', {
       uv: '',
     },
     hourlyWeather: [{
+      time: '',
+      temp: '',
+      icon: '',
+    }],
+    dailyWeather: [{
       time: '',
       temp: '',
       icon: '',
@@ -105,8 +111,8 @@ const useWeather = defineStore('weather', {
         position: position || null,
         unit: unit || this.getUnit,
       })
-        .then(async (coord) => {
-          await this.setHourlyForecast(coord);
+        .then(async ({ coord, dt, timezone }) => {
+          await this.setHourlyForecast(coord, { dt, timezone });
         });
     },
     async setCurrentWeather({ city, position, unit }) {
@@ -135,7 +141,7 @@ const useWeather = defineStore('weather', {
             assignCurrentData(data, this);
             this.geoLocation.lat = data.coord.lat;
             this.geoLocation.lat = data.coord.lon;
-            resolve(data.coord);
+            resolve({ coord: data.coord, dt: data.dt, timezone: data.timezone });
           });
         } catch (error) {
           this.error.current = error;
@@ -143,10 +149,10 @@ const useWeather = defineStore('weather', {
         this.loading = false;
       });
     },
-    async setHourlyForecast({ lat, lon }) {
+    async setHourlyForecast({ lat, lon }, { dt, timezone }) {
       this.loading = true;
       try {
-        const fetchWithCoordinates = `${openWeatherBaseUrl}/forecast?lat=${lat}&lon=${lon}&cnt=9&appid=${openWeatherApiKey}&units=${this.getUnit}`;
+        const fetchWithCoordinates = `${openWeatherBaseUrl}/forecast?lat=${lat}&lon=${lon}&appid=${openWeatherApiKey}&units=${this.getUnit}`;
 
         const { data } = await axios.get(
           fetchWithCoordinates,
@@ -156,6 +162,7 @@ const useWeather = defineStore('weather', {
           },
         );
         mapAndAddHourly(data.list, this);
+        mapAndAddDaily({ dt, timezone }, data.list, this);
       } catch (error) {
         this.error.hourly = error;
       }

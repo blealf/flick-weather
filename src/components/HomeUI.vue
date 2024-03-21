@@ -3,7 +3,7 @@
     <div class="home__grid">
       <CurrentWeather class="current" />
       <HourlyForecast class="hourly" />
-      <DetailedHourlyForecast class="seven" />
+      <DailyForecast class="seven" />
       <AirConditions class="air"/>
     </div>
   </div>
@@ -13,7 +13,7 @@
 import CurrentWeather from './CurrentWeather.vue';
 import HourlyForecast from './HourlyForecast.vue';
 import AirConditions from './AirConditions.vue';
-import DetailedHourlyForecast from './DetailedHourlyForecast.vue';
+import DailyForecast from './DailyForecast.vue';
 
 </script>
 

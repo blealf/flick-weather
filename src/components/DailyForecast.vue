@@ -1,8 +1,8 @@
 <template>
   <Card class="seven-day">
-    <h2>DETAILED HOURLY FORECAST</h2>
-    <div v-if="todaysForecast.length > 1" class="seven-day__wrapper">
-      <div v-for="item in todaysForecast" :key="item.name" class="seven-day__item">
+    <h2>DAILY FORECAST</h2>
+    <div v-if="dailyForecast.length > 1" class="seven-day__wrapper">
+      <div v-for="item in dailyForecast" :key="item.name" class="seven-day__item">
         <p>{{ item.time }}</p>
         <div class="weather">
           <p>{{ item.weather }}</p>
@@ -22,11 +22,11 @@ import { temperatureSymbol } from '../utils/helper';
 
 const weather = useWeather();
 
-const todaysForecast = ref(weather.hourlyWeather);
+const dailyForecast = ref(weather.dailyWeather);
 const symbol = shallowRef(temperatureSymbol(weather.unitSettings.temperature));
 
 weather.$subscribe((_, state) => {
-  todaysForecast.value = state.hourlyWeather;
+  dailyForecast.value = state.dailyWeather;
   symbol.value = temperatureSymbol(state.unitSettings.temperature);
 });
 </script>
@@ -43,7 +43,11 @@ weather.$subscribe((_, state) => {
     align-items: center;
     width: 100%;
     border-bottom: 2px solid #444;
-    padding: 10px;
+    padding: 25px 10px;
+
+    @include xs {
+      padding: 10px;
+    }
 
     &:last-of-type {
       border-bottom: none;
@@ -66,4 +70,4 @@ weather.$subscribe((_, state) => {
     }
   }
 }
-</style>./base/CardComponent.vue
+</style>

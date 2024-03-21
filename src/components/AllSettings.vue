@@ -24,7 +24,7 @@
           </div>
         </div>
       </CardComponent>
-      <DetailedHourlyForecast></DetailedHourlyForecast>
+      <DailyForecast />
     </div>
   </div>
 </template>
@@ -34,7 +34,7 @@ import { shallowRef, ref } from 'vue';
 import useWeather from '../stores/weatherStore';
 import useData from '../stores/dataStore';
 import CardComponent from './base/CardComponent.vue';
-import DetailedHourlyForecast from './DetailedHourlyForecast.vue';
+import DailyForecast from './DailyForecast.vue';
 
 const weather = useWeather();
 const units = weather.unitSettings;
@@ -100,4 +100,4 @@ const setUnit = async (unit, value) => {
     }
   }
 }
-</style>./base/CardComponent.vue
+</style>./base/CardComponent.vue./DailyForecast.vue
