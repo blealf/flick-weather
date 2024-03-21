@@ -177,9 +177,6 @@ watch(search, (newVal, preVal) => {
       border-bottom: 1px solid #444;
       cursor: pointer;
       border-radius: 5px;
-      &:hover {
-        /*  */
-      }
     }
   }
 }
