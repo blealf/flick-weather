@@ -18,7 +18,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
-import Card from './CardComponent.vue';
+import Card from './base/CardComponent.vue';
 import useWeather from '../stores/weatherStore';
 import { temperatureSymbol } from '../utils/helper';
 
@@ -82,4 +82,4 @@ weather.$subscribe((_, state) => {
     }
   }
 }
-</style>
+</style>./base/CardComponent.vue

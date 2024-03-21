@@ -32,7 +32,7 @@ export const assignCurrentData = (data, state) => {
 
   state.currentWeather.temperature = data.main.temp.toFixed(0);
   state.currentWeather.pressure = data.main.pressure;
-  state.currentWeather.date = dayjs(1710852178).format('hh:mm A');
+  state.currentWeather.date = dayjs(new Date((data.dt + data.timezone) * 1000)).format('hh:mm A');
   state.currentWeather.icon = getWeatherIcon(data.weather[0].icon, '4x');
   state.currentWeather.description = data.weather[0].description;
 };

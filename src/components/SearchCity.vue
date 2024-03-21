@@ -137,6 +137,7 @@ watch(search, (newVal, preVal) => {
     max-width: 900px;
     background: var(--card-bg);
     font-size: 18px;
+    color: var(--font-color);
   }
   .input-icons {
     position: absolute;

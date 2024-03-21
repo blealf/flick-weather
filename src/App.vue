@@ -11,7 +11,7 @@
     </div>
     <div v-else>
       <NoCity>
-        <SearchCity v-if="route.path !== '/settings'" @geo-locate="getLocationAndFetch" />
+        <SearchCity  @geo-locate="getLocationAndFetch" />
       </NoCity>
     </div>
   </div>
@@ -20,10 +20,10 @@
 <script setup>
 import { useRoute } from 'vue-router';
 import { onMounted } from 'vue';
-import SideNav from './components/SideNav.vue';
+import SideNav from './components/base/SideNav.vue';
 import SearchCity from './components/SearchCity.vue';
 import useWeather from './stores/weatherStore';
-import NoCity from './components/NoCity.vue';
+import NoCity from './components/base/NoCity.vue';
 import useData from './stores/dataStore';
 
 const route = useRoute();
@@ -86,4 +86,4 @@ onMounted(async () => {
     grid-template-columns: 1fr;
   }
 }
-</style>
+</style>./components/base/NoCity.vue./components/base/SideNav.vue

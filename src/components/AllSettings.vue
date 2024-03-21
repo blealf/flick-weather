@@ -33,7 +33,7 @@
 import { shallowRef, ref } from 'vue';
 import useWeather from '../stores/weatherStore';
 import useData from '../stores/dataStore';
-import CardComponent from './CardComponent.vue';
+import CardComponent from './base/CardComponent.vue';
 import DetailedHourlyForecast from './DetailedHourlyForecast.vue';
 
 const weather = useWeather();
@@ -100,4 +100,4 @@ const setUnit = async (unit, value) => {
     }
   }
 }
-</style>
+</style>./base/CardComponent.vue

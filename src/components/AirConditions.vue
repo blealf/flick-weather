@@ -20,7 +20,7 @@
 <script setup>
 import { shallowRef, defineAsyncComponent } from 'vue';
 import { temperatureSymbol } from '../utils/helper';
-import Card from './CardComponent.vue';
+import Card from './base/CardComponent.vue';
 import useWeather from '../stores/weatherStore';
 import AirConditionsSkeleton from './skeletons/AirConditionsSkeleton.vue';
 

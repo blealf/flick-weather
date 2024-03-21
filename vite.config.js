@@ -17,6 +17,25 @@ export default defineConfig({
       devOptions: {
         enabled: true,
       },
+      includeAssets: ['favicon.ico', 'apple-touch-icon.svg', 'vite.svg'],
+      manifest: {
+        name: 'Flick Weather',
+        short_name: 'Flick-W',
+        description: 'A responsive weather app for all locations',
+        theme_color: '#0B131E',
+        icons: [
+          {
+            src: 'pwa-192x192.svg',
+            sizes: '192x192',
+            type: 'image/svg',
+          },
+          {
+            src: 'pwa-512x512.svg',
+            sizes: '512x512',
+            type: 'image/svg',
+          },
+        ],
+      },
     }),
   ],
   resolve: {

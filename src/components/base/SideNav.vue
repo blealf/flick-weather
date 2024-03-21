@@ -24,7 +24,7 @@ import { useRoute, useRouter } from 'vue-router';
 const route = useRoute();
 const router = useRouter();
 
-const fetchSvg = (icon) => defineAsyncComponent(() => import(`../assets/images/nav/${icon}.svg`));
+const fetchSvg = (icon) => defineAsyncComponent(() => import(`../../assets/images/nav/${icon}.svg`));
 
 const logo = fetchSvg('logo');
 const navItems = shallowRef([
