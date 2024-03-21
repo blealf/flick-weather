@@ -100,11 +100,8 @@ const debounceFetchCities = debounce(fetchCities, 1000);
 const selectCity = async (city) => {
   selectedCity.value = city;
   await weather.setCurrentCity(city, route.path === '/');
-  await weather.setCurrentWeather({ city })
-    .then(async (coord) => {
-      await weather.setHourlyForecast(coord);
-    });
   clearInput();
+  await weather.fetchAllWeather({ city });
 };
 
 const emit = defineEmits(['geo-locate']);
