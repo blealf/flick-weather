@@ -36,7 +36,7 @@ export const mapAndAddDaily = async ({ dt, timezone }, data, state) => {
   const firstSplice = Math.floor((timeToTwelve) / 3);
   const nextSplice = firstSplice + 8;
 
-  const dailyWeather = [...data.splice(0, 1), ...data.splice(firstSplice, 1)];
+  const dailyWeather = [...data.splice(firstSplice, 1)];
   for (let i = nextSplice - 1; i < data.length; i += (nextSplice - 1)) {
     dailyWeather.push(...data.splice(i, 1));
   }
