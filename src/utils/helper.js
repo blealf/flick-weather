@@ -1,8 +1,10 @@
 /* eslint-disable-next-line */
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(relativeTime);
+dayjs.extend(utc);
 
 // Configs
 export const openWeatherBaseUrl = 'https://api.openweathermap.org/data/2.5';
@@ -50,10 +52,11 @@ export const assignCurrentData = (data, state) => {
   state.currentAirData.windSpeed = data.wind.speed;
   state.currentAirData.humidity = data.main.humidity;
 
-  const currentDate = dayjs(new Date((data.dt + data.timezone) * 1000)).format('hh:mm A');
   state.currentWeather.temperature = data.main.temp.toFixed(0);
   state.currentWeather.pressure = data.main.pressure;
-  state.currentWeather.date = currentDate;
+  state.currentWeather.date = dayjs(new Date(
+    (data.dt + data.timezone) * 1000,
+  )).utc().format('hh:mm A');
   state.currentWeather.icon = getWeatherIcon(data.weather[0].icon, '4x');
   state.currentWeather.description = data.weather[0].description;
 };
