@@ -22,7 +22,7 @@ router.afterEach((to) => {
   // Use next tick to handle router history correctly
   // see: https://github.com/vuejs/vue-router/issues/914#issuecomment-384477609
   nextTick(() => {
-    document.title = `${appTitle} - ${to.name}`;
+    document.title = `${appTitle || 'FlickWeather'} - ${to.name}`;
   });
 });
 
